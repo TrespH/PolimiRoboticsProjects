@@ -1,0 +1,7 @@
+<launch>
+    <!-- Publisher node with namespace -->
+    <group ns="namespace">
+    <node pkg="pub_sub" type="pub" name="talker" output="screen" />
+    </group>
+
+</launch>

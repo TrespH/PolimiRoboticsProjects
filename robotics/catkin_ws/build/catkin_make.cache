@@ -1,2 +1,0 @@
-custom_messages:fibonacci:message_filters:parameter_test/parameter_test:pub_sub:pub_sub_same:service:tf:timer
--DCATKIN_DEVEL_PREFIX=/home/robotics/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/robotics/catkin_ws/install -G Unix Makefiles

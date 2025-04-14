@@ -1,0 +1,8 @@
+prefix=/home/robotics/catkin_ws/devel
+
+Name: message_filters_example
+Description: Description of message_filters_example
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs message_filters

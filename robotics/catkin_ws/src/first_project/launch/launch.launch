@@ -1,1 +1,4 @@
-Ciaoo
+<launch>
+    <node pkg="first_project" type="gps_odometer" name="gps_odometer" output="screen" args="45.618932 9.281179 229.049061" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="front" args="0 0 0 0 0 0 1 odom gps" />
+</launch>

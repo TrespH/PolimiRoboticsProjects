@@ -13,7 +13,7 @@ RUN apt-get update && \
     
 #forgot a few stuff    
 RUN apt-get update && \
-    apt-get install -y net-tools iproute2 ros-noetic-plotjuggler* ros-noetic-foxglove-bridge ros-noetic-turtlesim* gedit    
+    apt-get install -y net-tools iproute2 ros-noetic-plotjuggler* ros-noetic-foxglove-bridge ros-noetic-turtlesim* gedit   
 
 # Create a non-root user named 'robotics' with home directory
 RUN useradd -m -s /bin/bash robotics && \

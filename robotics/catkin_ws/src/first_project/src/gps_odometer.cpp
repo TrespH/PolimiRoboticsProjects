@@ -30,8 +30,8 @@ public:
     ROS_INFO("Initialized ECEF reference: (%f, %f, %f)", x_ECEF_ref, y_ECEF_ref, z_ECEF_ref);
 
     // Initialize the publisher and subscriber
-    pub = n.advertise<nav_msgs::Odometry>("gps_odom", 1000);
-    sub = n.subscribe("swiftnav/front/gps_pose", 1000, &GpsOdometer::callback, this);
+    sub = n.subscribe("/swiftnav/front/gps_pose", 1000, &GpsOdometer::callback, this);
+    pub = n.advertise<nav_msgs::Odometry>("/gps_odom", 1000);
   }
 
   double smoothHeading(double new_heading) {
@@ -128,7 +128,7 @@ private:
   std::deque<double> heading_buffer;
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   if (argc < 4) {
     ROS_ERROR("Launch usage: %s <latitude> <longitude> <altitude>", argv[0]);
     return 1;

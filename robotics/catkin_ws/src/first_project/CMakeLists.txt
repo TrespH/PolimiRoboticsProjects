@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   message_generation
   nav_msgs
+  message_filters
 )
 
 ## System dependencies are found with CMake's conventions
@@ -91,6 +92,7 @@ catkin_package(
   sensor_msgs
   geometry_msgs
   nav_msgs
+  message_filters
 )
 
 

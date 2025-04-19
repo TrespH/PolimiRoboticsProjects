@@ -40,8 +40,8 @@ public:
     // Angular velocity
     double omega = speed_ms / R;
 
-    x += speed_ms * cos(theta) * dt;
-    y += speed_ms * sin(theta) * dt;
+    x += speed_ms * -cos(theta) * dt;
+    y += speed_ms * -sin(theta) * dt;
     theta += omega * dt;
 
     publishOdometry(current_time, speed_ms, omega);
@@ -50,7 +50,7 @@ public:
     transform.setOrigin(tf::Vector3(x, y, 0.0));
     q.setRPY(0, 0, theta);
     transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, current_time, "odom", "vehicle"));
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "vehicle"));
   }
 
 private:

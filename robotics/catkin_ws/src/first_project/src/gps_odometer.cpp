@@ -5,14 +5,14 @@
 #include <tf/transform_broadcaster.h>
 #include <deque>
 
-#define HEADING_BUFFER_SIZE 12
+#define HEADING_BUFFER_SIZE 5
 
 class GpsOdometer {
 public:
   GpsOdometer(double lat, double lon, double alt) {
     // Initialize reference point and convert degrees to radians
-    lat_ref = lat * deg_to_rad;
-    lon_ref = lon * deg_to_rad;
+    lat_ref = lat * DEG_TO_RAD;
+    lon_ref = lon * DEG_TO_RAD;
     alt_ref = alt;
     sin_lat_ref = sin(lat_ref);
     cos_lat_ref = cos(lat_ref);
@@ -20,10 +20,10 @@ public:
     cos_lon_ref = cos(lon_ref);
 
     // Initialize ECEF reference point
-    double N = a / (sqrt(1 - e2 * sin_lat_ref * sin_lat_ref));
+    double N = A / (sqrt(1 - E2 * sin_lat_ref * sin_lat_ref));
     x_ECEF_ref = (N + alt_ref) * cos_lat_ref * cos_lon_ref;
     y_ECEF_ref = (N + alt_ref) * cos_lat_ref * sin_lon_ref;
-    z_ECEF_ref = (N * e2_inv + alt_ref) * sin_lat_ref;
+    z_ECEF_ref = (N * E2_INV + alt_ref) * sin_lat_ref;
 
     ROS_INFO("Initialized reference: (%f, %f, %f)", lat_ref, lon_ref, alt_ref);
     ROS_INFO("Initialized reference trigon.: (%f, %f, %f, %f)", sin_lat_ref, cos_lat_ref, sin_lon_ref, cos_lon_ref);
@@ -58,15 +58,15 @@ public:
   void callback(const sensor_msgs::NavSatFix::ConstPtr &msg) {
     ros::Time timestamp = msg->header.stamp;
 
-    const double lat = msg->latitude * deg_to_rad;
-    const double lon = msg->longitude * deg_to_rad;
+    const double lat = msg->latitude * DEG_TO_RAD;
+    const double lon = msg->longitude * DEG_TO_RAD;
     const double alt = msg->altitude;
     const double sin_lat = sin(lat), cos_lat = cos(lat), sin_lon = sin(lon), cos_lon = cos(lon);
     // lat-lon-alt To ECEF
-    const double N = a / (sqrt(1.0 - e2 * sin_lat * sin_lat));
+    const double N = A / (sqrt(1.0 - E2 * sin_lat * sin_lat));
     double x_ECEF = (N + alt) * cos_lat * cos_lon;
     double y_ECEF = (N + alt) * cos_lat * sin_lon;
-    double z_ECEF = (N * e2_inv + alt) * sin_lat;
+    double z_ECEF = (N * E2_INV + alt) * sin_lat;
 
     // ECEF to ENU
     double x_diff = x_ECEF - x_ECEF_ref;
@@ -108,14 +108,14 @@ private:
   ros::Subscriber sub;
   tf::TransformBroadcaster br;
   tf::Transform transform;
-  tf::Quaternion q;
+  tf::Quaternion  q;
 
-  const double a = 6378137.0; // semi major axis of the equatorial radius
-  const double b = 6356752.0; // semi minor axis of the polar radius
+  const double A = 6378137.0; // semi major axis of the equatorial radius
+  const double B = 6356752.0; // semi minor axis of the polar radius
   // 1- (6356752^2/6378137^2) =~ 0.00669447819799328602965141827689...
-  const double e2 = 1.0 - pow(b, 2) / pow(a, 2);
-  const double e2_inv = 1.0 - e2;
-  const double deg_to_rad = M_PI / 180.0;
+  const double E2 = 1.0 - pow(B, 2) / pow(A, 2);
+  const double E2_INV = 1.0 - E2;
+  const double DEG_TO_RAD = M_PI / 180.0;
 
   double x_ECEF_ref, y_ECEF_ref, z_ECEF_ref;
   double lat_ref, lon_ref, alt_ref;

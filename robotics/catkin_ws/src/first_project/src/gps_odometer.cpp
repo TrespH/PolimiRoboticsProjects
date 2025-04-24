@@ -32,6 +32,12 @@ public:
     // Initialize the publisher and subscriber
     sub = n.subscribe("/swiftnav/front/gps_pose", 1000, &GpsOdometer::callback, this);
     pub = n.advertise<nav_msgs::Odometry>("/gps_odom", 1000);
+	
+	// Setup timer for publishing transforms at fixed rate (e.g., 1Hz)
+    pub_timer = n.createTimer(ros::Duration(1), &GpsOdometer::publishTf, this);
+    
+    // Initialize flag
+    have_data = false;
   }
 
   double smoothHeading(double new_heading) {
@@ -62,6 +68,7 @@ public:
     const double lon = msg->longitude * DEG_TO_RAD;
     const double alt = msg->altitude;
     const double sin_lat = sin(lat), cos_lat = cos(lat), sin_lon = sin(lon), cos_lon = cos(lon);
+	
     // lat-lon-alt To ECEF
     const double N = A / (sqrt(1.0 - E2 * sin_lat * sin_lat));
     double x_ECEF = (N + alt) * cos_lat * cos_lon;
@@ -72,34 +79,27 @@ public:
     double x_diff = x_ECEF - x_ECEF_ref;
     double y_diff = y_ECEF - y_ECEF_ref;
     double z_diff = z_ECEF - z_ECEF_ref;
-    double x_ENU = -sin_lon_ref * x_diff + cos_lon_ref * y_diff;
-    double y_ENU = -sin_lat_ref * cos_lon_ref * x_diff - sin_lat_ref * sin_lon_ref * y_diff + cos_lat_ref * z_diff;
-    double z_ENU = cos_lat_ref * cos_lon_ref * x_diff + cos_lat_ref * sin_lon_ref * y_diff + sin_lat_ref * z_diff;
+    x_ENU = -sin_lon_ref * x_diff + cos_lon_ref * y_diff;
+    y_ENU = -sin_lat_ref * cos_lon_ref * x_diff - sin_lat_ref * sin_lon_ref * y_diff + cos_lat_ref * z_diff;
+    z_ENU = cos_lat_ref * cos_lon_ref * x_diff + cos_lat_ref * sin_lon_ref * y_diff + sin_lat_ref * z_diff;
 
     double raw_heading = atan2(y_ENU - y_ENU_prev, x_ENU - x_ENU_prev);
-    double smoothed_heading = smoothHeading(raw_heading);
+    smoothed_heading = smoothHeading(raw_heading);
 
     x_ENU_prev = x_ENU;
     y_ENU_prev = y_ENU;
 
+    have_data = true;
+	publishOdometry(timestamp);
+  }
+  
+  void publishTf(const ros::TimerEvent&) {
+	if (!have_data) return;
+    // Broadcast transform (odom -> gps)
     transform.setOrigin(tf::Vector3(x_ENU, y_ENU, z_ENU));
     q.setRPY(0, 0, smoothed_heading);
     transform.setRotation(q);
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "gps"));
-
-    nav_msgs::Odometry pub_msg;
-    pub_msg.pose.pose.position.x = x_ENU;
-    pub_msg.pose.pose.position.y = y_ENU;
-    pub_msg.pose.pose.position.z = z_ENU;
-    pub_msg.pose.pose.orientation.x = q.x();
-    pub_msg.pose.pose.orientation.y = q.y();
-    pub_msg.pose.pose.orientation.z = q.z();
-    pub_msg.pose.pose.orientation.w = q.w();
-    pub_msg.header.stamp = timestamp;
-    pub_msg.header.frame_id = "odom";
-    pub_msg.child_frame_id = "gps";
-    pub.publish(pub_msg);
-    ROS_INFO("Pub: (%f, %f, %f); heading: (%f)", x_ENU, y_ENU, z_ENU, smoothed_heading);
   }
 
 private:
@@ -108,24 +108,46 @@ private:
   ros::Subscriber sub;
   tf::TransformBroadcaster br;
   tf::Transform transform;
-  tf::Quaternion  q;
+  tf::Quaternion q;
 
   const double A = 6378137.0; // semi major axis of the equatorial radius
   const double B = 6356752.0; // semi minor axis of the polar radius
-  // 1- (6356752^2/6378137^2) =~ 0.00669447819799328602965141827689...
-  const double E2 = 1.0 - pow(B, 2) / pow(A, 2);
+  const double E2 = 1.0 - pow(B, 2) / pow(A, 2); // =~ 0.0066944
   const double E2_INV = 1.0 - E2;
   const double DEG_TO_RAD = M_PI / 180.0;
 
   double x_ECEF_ref, y_ECEF_ref, z_ECEF_ref;
   double lat_ref, lon_ref, alt_ref;
   double sin_lat_ref, cos_lat_ref, sin_lon_ref, cos_lon_ref;
+  double x_ENU, y_ENU, z_ENU, smoothed_heading;
+  
+  // Timer variables
+  ros::Timer pub_timer;
+  bool have_data;
 
   // Initial previous ENU, for initial heading calculation
   double x_ENU_prev = 0, y_ENU_prev = 0;
 
   // Orientation smoothing
   std::deque<double> heading_buffer;
+  
+  void publishOdometry(const ros::Time& stamp) {
+	tf::Quaternion temp_q;
+    temp_q.setRPY(0, 0, smoothed_heading);
+	nav_msgs::Odometry pub_msg;
+    pub_msg.pose.pose.position.x = x_ENU;
+    pub_msg.pose.pose.position.y = y_ENU;
+    pub_msg.pose.pose.position.z = z_ENU;
+    pub_msg.pose.pose.orientation.x = temp_q.x();
+    pub_msg.pose.pose.orientation.y = temp_q.y();
+    pub_msg.pose.pose.orientation.z = temp_q.z();
+    pub_msg.pose.pose.orientation.w = temp_q.w();
+    pub_msg.header.stamp = stamp;
+    pub_msg.header.frame_id = "odom";
+    pub_msg.child_frame_id = "gps";
+    pub.publish(pub_msg);
+    ROS_INFO("Pub: (%f, %f, %f); heading: (%f)", x_ENU, y_ENU, z_ENU, smoothed_heading);
+  }
 };
 
 int main(int argc, char** argv) {

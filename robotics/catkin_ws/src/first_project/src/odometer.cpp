@@ -14,6 +14,12 @@ public:
     ros::NodeHandle n;
     sub = n.subscribe("/speedsteer", 10, &Odometer::callback, this);
     pub = n.advertise<nav_msgs::Odometry>("/odom", 10);
+	
+	// Setup timer for publishing transforms at fixed rate (e.g., 1Hz)
+    pub_timer = n.createTimer(ros::Duration(1), &Odometer::publishTf, this);
+	
+	// Initialize flag
+    have_data = false;
   }
 
   void callback(const geometry_msgs::PointStamped::ConstPtr& msg) {
@@ -44,9 +50,13 @@ public:
     x += speed_ms * cos(theta) * dt;
     y += speed_ms * sin(theta) * dt;
     theta += omega * dt;
-
+	
+	have_data = true;
     publishOdometry(current_time, speed_ms, omega);
-
+  }
+  
+  void publishTf(const ros::TimerEvent&) {
+	if (!have_data) return;
     // Broadcast transform (odom -> vehicle)
     transform.setOrigin(tf::Vector3(x, y, 0.0));
     q.setRPY(0, 0, theta);
@@ -59,18 +69,23 @@ private:
   const double FRONT_REAR_WHEELS_DISTANCE = 1.765; // Distance between front and rear wheels [m]
   const double HALF_REAR_WHEELS_DISTANCE = 1.30 / 2.0; // (2b/2) [m]
   const double STEERING_FACTOR = 32.0; // Steering wheel to wheel angle ratio
-  const double STEER_ADJUST_FACTOR = 8; // Discrepancy observed at the first rettilineo 
+  const double STEER_ADJUST_FACTOR = 7.8; // Misalignent observed at the first rettilineo 
   const double DEG_TO_RAD = M_PI / 180.0;
   const double KMH_TO_MS = 1000.0 / 3600.0;
 
   ros::Subscriber sub;
   ros::Publisher pub;
+  
   tf::TransformBroadcaster br;
   tf::Transform transform;
   tf::Quaternion q;
 
   double x, y, theta;
   ros::Time last_time;
+
+  // Timer variables
+  ros::Timer pub_timer;
+  bool have_data;
 
   // Publish odometry data
   void publishOdometry(const ros::Time& stamp, double linear_vel, double angular_vel) {
@@ -83,12 +98,12 @@ private:
     odom_msg.pose.pose.position.y = y;
     odom_msg.pose.pose.position.z = 0.0;
 
-    tf::Quaternion q;
-    q.setRPY(0, 0, theta);
-    odom_msg.pose.pose.orientation.x = q.x();
-    odom_msg.pose.pose.orientation.y = q.y();
-    odom_msg.pose.pose.orientation.z = q.z();
-    odom_msg.pose.pose.orientation.w = q.w();
+    tf::Quaternion temp_q;
+    temp_q.setRPY(0, 0, theta);
+    odom_msg.pose.pose.orientation.x = temp_q.x();
+    odom_msg.pose.pose.orientation.y = temp_q.y();
+    odom_msg.pose.pose.orientation.z = temp_q.z();
+    odom_msg.pose.pose.orientation.w = temp_q.w();
 
     odom_msg.twist.twist.linear.x = linear_vel;
     odom_msg.twist.twist.angular.z = angular_vel;

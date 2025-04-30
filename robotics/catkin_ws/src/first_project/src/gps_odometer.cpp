@@ -5,7 +5,7 @@
 #include <tf/transform_broadcaster.h>
 #include <deque>
 
-#define HEADING_BUFFER_SIZE 5
+#define HEADING_BUFFER_SIZE 5 // Smoothing buffer size
 
 class GpsOdometer {
 public:
@@ -33,7 +33,7 @@ public:
     sub = n.subscribe("/swiftnav/front/gps_pose", 1000, &GpsOdometer::callback, this);
     pub = n.advertise<nav_msgs::Odometry>("/gps_odom", 1000);
 	
-	// Setup timer for publishing transforms at fixed rate (e.g., 1Hz)
+	  // Setup timer for publishing transforms at fixed rate (1Hz)
     pub_timer = n.createTimer(ros::Duration(1), &GpsOdometer::publishTf, this);
     
     // Initialize flag
@@ -90,16 +90,7 @@ public:
     y_ENU_prev = y_ENU;
 
     have_data = true;
-	publishOdometry(timestamp);
-  }
-  
-  void publishTf(const ros::TimerEvent&) {
-	if (!have_data) return;
-    // Broadcast transform (odom -> gps)
-    transform.setOrigin(tf::Vector3(x_ENU, y_ENU, z_ENU));
-    q.setRPY(0, 0, smoothed_heading);
-    transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "gps"));
+	  publishOdometry(timestamp);
   }
 
 private:
@@ -132,9 +123,9 @@ private:
   std::deque<double> heading_buffer;
   
   void publishOdometry(const ros::Time& stamp) {
-	tf::Quaternion temp_q;
+	  tf::Quaternion temp_q;
     temp_q.setRPY(0, 0, smoothed_heading);
-	nav_msgs::Odometry pub_msg;
+	  nav_msgs::Odometry pub_msg;
     pub_msg.pose.pose.position.x = x_ENU;
     pub_msg.pose.pose.position.y = y_ENU;
     pub_msg.pose.pose.position.z = z_ENU;
@@ -146,7 +137,16 @@ private:
     pub_msg.header.frame_id = "odom";
     pub_msg.child_frame_id = "gps";
     pub.publish(pub_msg);
-    ROS_INFO("Pub: (%f, %f, %f); heading: (%f)", x_ENU, y_ENU, z_ENU, smoothed_heading);
+    // ROS_INFO("Pub: (%f, %f, %f); heading: (%f)", x_ENU, y_ENU, z_ENU, smoothed_heading);
+  }
+
+  void publishTf(const ros::TimerEvent&) {
+    if (!have_data) return;
+      // Broadcast transform (odom -> gps)
+      transform.setOrigin(tf::Vector3(x_ENU, y_ENU, z_ENU));
+      q.setRPY(0, 0, smoothed_heading);
+      transform.setRotation(q);
+      br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "gps"));
   }
 };
 

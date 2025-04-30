@@ -49,7 +49,7 @@ Visualization Manager:
     - Alpha: 0.5
       Cell Size: 1
       Class: rviz/Grid
-      Color: 160; 160; 164
+      Color: 255; 255; 255
       Enabled: true
       Line Style:
         Line Width: 0.03
@@ -84,19 +84,19 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
+      Keep: 2000
       Name: Odometry
       Position Tolerance: 0.1
       Queue Size: 10
       Shape:
         Alpha: 1
-        Axes Length: 1
-        Axes Radius: 0.1
-        Color: 0; 0; 255  # Blue
-        Head Length: 0.3
-        Head Radius: 0.1
-        Shaft Length: 1
-        Shaft Radius: 0.05
+        Axes Length: 2
+        Axes Radius: 1
+        Color: 0; 0; 255  # Blue for odometry
+        Head Length: 4
+        Head Radius: 4
+        Shaft Length: 16
+        Shaft Radius: 4
         Value: Arrow
       Topic: /odom
       Unreliable: false
@@ -121,19 +121,19 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
+      Keep: 2000
       Name: GPS Odometry
       Position Tolerance: 0.1
       Queue Size: 10
       Shape:
         Alpha: 1
-        Axes Length: 1
-        Axes Radius: 0.1
-        Color: 255; 0; 0  # Red
-        Head Length: 0.3
-        Head Radius: 0.1
-        Shaft Length: 1
-        Shaft Radius: 0.05
+        Axes Length: 2
+        Axes Radius: 1
+        Color: 255; 0; 0  # Red for gps
+        Head Length: 4
+        Head Radius: 4
+        Shaft Length: 16
+        Shaft Radius: 4
         Value: Arrow
       Topic: /gps_odom
       Unreliable: false
@@ -168,7 +168,7 @@ Visualization Manager:
 
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
+    Background Color: 200; 200; 200
     Default Light: true
     Fixed Frame: odom
     Frame Rate: 30
@@ -194,7 +194,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 34.09935760498047
+      Distance: 1000
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -202,23 +202,23 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.3669830560684204
-        Y: 0.2793472707271576
-        Z: 0.15643605589866638
+        X: 0
+        Y: 400
+        Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: -0.015203770250082016
+      Pitch: 1
       Target Frame: odom
-      Yaw: 0.7604016065597534
+      Yaw: 4.71238899230957 # 270 degrees in radians
     Saved: ~
 
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1758
+  Height: 1000
   Hide Left Dock: false
   Hide Right Dock: false
   QMainWindow State: <some value>
@@ -230,6 +230,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 3000
+  Width: 1500
   X: 0
   Y: 0

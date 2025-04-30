@@ -12,13 +12,13 @@ public:
     theta = 1.47; // Initial GPS heading measurement
 
     ros::NodeHandle n;
-    sub = n.subscribe("/speedsteer", 10, &Odometer::callback, this);
-    pub = n.advertise<nav_msgs::Odometry>("/odom", 10);
+    sub = n.subscribe("/speedsteer", 1000, &Odometer::callback, this);
+    pub = n.advertise<nav_msgs::Odometry>("/odom", 1000);
 	
-	// Setup timer for publishing transforms at fixed rate (e.g., 1Hz)
+	  // Setup timer for publishing transforms at fixed rate (1Hz)
     pub_timer = n.createTimer(ros::Duration(1), &Odometer::publishTf, this);
 	
-	// Initialize flag
+	  // Initialize flag
     have_data = false;
   }
 
@@ -69,7 +69,7 @@ private:
   const double FRONT_REAR_WHEELS_DISTANCE = 1.765; // Distance between front and rear wheels [m]
   const double HALF_REAR_WHEELS_DISTANCE = 1.30 / 2.0; // (2b/2) [m]
   const double STEERING_FACTOR = 32.0; // Steering wheel to wheel angle ratio
-  const double STEER_ADJUST_FACTOR = 7.8; // Misalignent observed at the first rettilineo 
+  const double STEER_ADJUST_FACTOR = 7.7; // Misalignent observed at the first rettilineo 
   const double DEG_TO_RAD = M_PI / 180.0;
   const double KMH_TO_MS = 1000.0 / 3600.0;
 

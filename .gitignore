@@ -7,3 +7,4 @@ robotics/catkin_ws/src/CMakeLists.txt
 
 #Ignore other stuff
 robotics/catkin_ws/src/service
+robotics/data/robotics2.bag

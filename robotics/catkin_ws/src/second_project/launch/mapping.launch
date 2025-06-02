@@ -9,7 +9,11 @@
 
     <!-- For sick_front -->
     <node pkg="tf2_ros" type="static_transform_publisher" name="static_front_laser"
-        args="0.3 0.0 -0.115 -0.9999993658637698 0.0007963264582434141 0.0007963264582434141 6.341362302272584e-07 base_link sick_front" />
-    
+        args="0.3 0.0 -0.115 -0.9999993658637698 0.0007963264582434141 0.0007963264582434141 6.341362302272584e-07 base_link sick_front" />    
+
+     <!-- Gmapping -->
+    <include file="$(find second_project)/launch/gmapping.launch.xml"/> 
+
+    <!-- RViz with config -->
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find second_project)/cfg/config.rviz" />
 </launch>

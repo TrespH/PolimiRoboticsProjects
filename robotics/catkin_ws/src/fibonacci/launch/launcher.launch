@@ -1,5 +1,0 @@
-<launch>
-<node name="fibonacci_client" pkg="actionlib_tutorials" type="fibonacci_client"  output ="screen"/>
-<param name="order" value="10"  type="int"/>
-<param name="duration" value="15"  type="double"/>
-</launch>

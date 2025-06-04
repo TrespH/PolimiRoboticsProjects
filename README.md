@@ -71,7 +71,7 @@ In `robotics/catkin_ws/src/first_project/` you can find the implementation of od
 
 ---
 
-## Second Project
+## Second Project (work in progress)
 
 In `robotics/catkin_ws/src/second_project/` you can find the implementation of a mapping and navigation pipeline for a mobile robot using ROS.
 

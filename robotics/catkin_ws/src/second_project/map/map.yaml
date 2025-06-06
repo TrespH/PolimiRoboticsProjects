@@ -1,4 +1,4 @@
-image: ./catkin_ws/src/second_project/map/map2.pgm
+image: map_trimmed.pgm
 resolution: 0.050000
 origin: [-21.200000, -21.200000, 0.000000]
 negate: 0

@@ -12,8 +12,8 @@ private:
     ros::Subscriber speedsteer_sub;
     ros::Subscriber gps_pose_sub;
     ros::Publisher sector_times_pub;
-    std::vector<std::pair<double,double>> checkpoints = {
-        {45.618928, 9.281170},  // Checkpoint 0 (ARRIVAL)
+    std::vector<std::pair<double,double>> checkpoints = { //coordinates taken from OpenStreetMap
+        {45.616364, 9.280795},  // Checkpoint 0 (Finish line). The finish line is before the actual end of the car’s run
         {45.630136, 9.290665},  // Checkpoint 1
         {45.622962, 9.286304}   // Checkpoint 2
     };
@@ -26,6 +26,7 @@ private:
     double mean_speed;
     double sectorTime;
     const double R = 6371000.0; //heart radius
+    const double CHECKPOINT_TOLERANCE = 5.0;
     bool is_started;
 
 public:
@@ -49,7 +50,7 @@ public:
             speedCount++;
             now = msg->header.stamp;
             sectorTime = (now - startTime).toSec();
-        } else { //first topic
+        } else { //first message received - initialize race start conditions
             startTime = msg->header.stamp;   
             speedSum = speed;
             speedCount = 1;
@@ -61,7 +62,7 @@ public:
         sector_msg.current_sector = currentSector;
         sector_msg.current_sector_time = sectorTime;
         sector_msg.current_sector_mean_speed = mean_speed;
-        sector_times_pub.publish(sector_msg);  //message post in speedCallback because speedsteer is the most frequent subscription
+        sector_times_pub.publish(sector_msg);
     }
 
     void gpsCallback(const sensor_msgs::NavSatFix::ConstPtr& msg) {
@@ -79,8 +80,7 @@ public:
         double target_lon = checkpoints[target_checkpoint].second; //checkpoint longitude
         double dist_to_cp = calculateDistance (curr_lat, curr_lon, target_lat, target_lon); 
 
-        if (dist_to_cp < 5){   //if I'm in the neighborhood of the checkpoint        
-
+        if (dist_to_cp < CHECKPOINT_TOLERANCE){   //if I'm in the neighborhood of the checkpoint        
             ROS_INFO("Sector %d: Time=%.2fs, Speed=%.2f km/h", currentSector, sectorTime, mean_speed); //data print
 
             startTime = now;
@@ -89,12 +89,12 @@ public:
             speedCount = 0;
 
             if (currentSector == 1){
-                ROS_INFO("FINISH!"); //the transition from sector 3 to sector 1 corresponds to the arrival
+                ROS_INFO("LAP COMPLETED!"); //the transition from sector 3 to sector 1 corresponds to the arrival
             }
         }
     }
 
-    double calculateDistance (double lat1, double lon1, double lat2, double lon2){ //Haversine formula (from coordinates to meters)
+    double calculateDistance (double lat1, double lon1, double lat2, double lon2){ //Haversine formula: from coordinates to meters (good for short distances)
         double dlat = (lat1 - lat2) * M_PI / 180; //delta lat in radiant
         double dlon = (lon1 - lon2) * M_PI / 180; //delta lon in radiant
         double a = sin(dlat/2)*sin(dlat/2)+cos(lat1*M_PI/180)*cos(lat2*M_PI/180)*sin(dlon/2)*sin(dlon/2);

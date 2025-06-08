@@ -9,7 +9,7 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
-#define ROBOT_RADIUS 0.4 // meters to filter from LIDAR scans
+#define ROBOT_RADIUS 0.35 // meters to filter from LIDAR scans
 
 class LaserScanMerger {
 public:
@@ -45,7 +45,6 @@ public:
         merged.angle_max = MERGED_ANGLE_MAX;
         merged.angle_increment = ANGLE_INCREMENT;
         merged.ranges.resize(NUM_BINS, std::numeric_limits<float>::infinity());
-        merged.intensities.resize(NUM_BINS, 0.0);
 
         processScan(latest_back, merged);
         processScan(latest_front, merged);
@@ -65,7 +64,7 @@ public:
             if (r < ROBOT_RADIUS || std::isnan(r) || !std::isfinite(r)) continue;
 
             float angle = ANGLE_MIN + i * ANGLE_INCREMENT;
-			if (angle < ANGLE_LEFT_CUT || angle > ANGLE_RIGHT_CUT) continue;
+			// if (angle < ANGLE_LEFT_CUT || angle > ANGLE_RIGHT_CUT) continue;
 
             scan_point.header.frame_id = scan->header.frame_id;
             scan_point.header.stamp = scan->header.stamp;
@@ -82,12 +81,11 @@ public:
 
             float base_r = std::hypot(base_point.point.x, base_point.point.y);
             float base_angle = std::atan2(base_point.point.y, base_point.point.x);
-
             int idx = (int)((base_angle - MERGED_ANGLE_MIN) / ANGLE_INCREMENT);
+			
             if (idx >= 0 && idx < merged.ranges.size()) {
                 if (base_r < merged.ranges[idx]) {
                     merged.ranges[idx] = std::min(merged.ranges[idx], base_r);
-                    merged.intensities[idx] = scan->intensities[i];
                 }
             }
         }

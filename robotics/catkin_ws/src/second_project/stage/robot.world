@@ -19,7 +19,7 @@ floorplan
   name "map"
   bitmap "../map/map_trimmed.pgm" 
   size [43.2 30.4 0.02]      
-  pose [0 0 0 0]               # initial position
+  pose [-21.2 -21.2 0 0]     # initial position
   boundary 1                 # collisions enabled
 )
 
@@ -33,5 +33,5 @@ window
 
 my_robot
 ( 
-  pose [0 0 0 0]  
+  pose [-21.2 -21.2 0 0]  
 )

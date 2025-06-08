@@ -1,4 +1,4 @@
-# File: second_project/stage/robot.world
+include "my_robot.inc"
 
 define floorplan model
 (
@@ -17,21 +17,20 @@ define floorplan model
 floorplan
 (
   name "map"
-  bitmap "../map/map_trimmed.pgm" 
-  size [43.2 30.4 0.02]      
-  pose [-21.2 -21.2 0 0]     # initial position
+  bitmap "../map/map3_cropped.pgm" 
+  size [31.95 19.55 1.0]      
+  pose [0 0 0 0]               # initial position
+  origin [3.675 -2.925 0 0]
   boundary 1                 # collisions enabled
 )
-
-include "my_robot.inc"
 
 window
 (
   size [ 1000 700 ]
-  center [ 0.0 0.0 ]
+  center [0 0 0.0]
 )
 
 my_robot
-( 
-  pose [-21.2 -21.2 0 0]  
+(
+  pose [-6.5 -4.0 0 0]  
 )

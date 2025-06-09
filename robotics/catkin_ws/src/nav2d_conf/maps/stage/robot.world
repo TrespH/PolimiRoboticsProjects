@@ -6,7 +6,7 @@ define floorplan model
 
   boundary 1
 
-  gui_nose 1
+  gui_nose 0
   gui_grid 0
   gui_outline 0
   gripper_return 0
@@ -14,16 +14,14 @@ define floorplan model
   laser_return 1
 )
 
-resolution 0.05
-interval_sim 100
-
 floorplan
 (
   name "map"
-  bitmap "../map/map3_cleaned.pgm" 
+  bitmap "../map3_cleaned.pgm" 
   size [31.95 19.55 1.0]      
   pose [0 0 0 0]               # initial position
   origin [3.675 -2.925 0 0]
+  boundary 1                 # collisions enabled
 )
 
 window
@@ -34,5 +32,5 @@ window
 
 my_robot
 (
-  pose [-6.5 -4.0 0 0]
+  pose [-6.5 -4.0 0 0]  
 )

@@ -1,4 +1,5 @@
 <launch>
+  <arg name="base"       default="burger"/>
   <!-- Name of the map to use and initial position -->
   <arg name="map_file"       default="$(find second_project)/map/map3_cropped.yaml"/>
   <arg name="world_file"     default="$(find second_project)/stage/robot.world"/>
@@ -24,16 +25,22 @@
     <rosparam file="$(find second_project)/config/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find second_project)/config/dwa_local_planner_params.yaml" command="load" />
     <rosparam file="$(find second_project)/config/move_base_params.yaml" command="load" />
-
+    <rosparam file="$(find second_project)/config/clear_costmap_recovery.yaml" command="load" ns="move_base/aggressive_reset"/>
+    <rosparam file="$(find second_project)/config/clear_costmap_recovery.yaml" command="load" ns="move_base/conservative_reset"/>
     <param name="base_global_planner" value="navfn/NavfnROS" />
     <param name="planner_frequency" value="1.0" />
     <param name="planner_patience" value="5.0" />
-
     <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
     <param name="controller_frequency" value="5.0" />
     <param name="controller_patience" value="5.0" />
-
+    <param name="recovery_behavior_enabled" value="true"/>
     <param name="clearing_rotation_allowed" value="true"/>
+    <param name="conservative_reset_dist" value="3.0"/> 
+    <rosparam param="recovery_behaviors"> 
+      [{name: conservative_reset, type: clear_costmap_recovery/ClearCostmapRecovery},
+       {name: rotate_recovery, type: rotate_recovery/RotateRecovery},
+       {name: aggressive_reset, type: clear_costmap_recovery/ClearCostmapRecovery}]
+    </rosparam>
   </node>
 
   <!--(goal publisher) -->

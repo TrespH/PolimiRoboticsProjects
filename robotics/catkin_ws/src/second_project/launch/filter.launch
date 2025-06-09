@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="second_project" type="filter_map.py" name="map_filter" output="screen"/>
+</launch>

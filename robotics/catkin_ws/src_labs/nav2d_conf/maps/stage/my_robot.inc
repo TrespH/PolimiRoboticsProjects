@@ -7,15 +7,13 @@ define kinect ranger
     samples 640
   )
   # generic model properties
-  color "black"
+  color "green"
   size [ 0.06 0.15 0.03 ]
 )
 
 define my_robot position
 (
   size [0.54 0.40 0.10]
-
-  pose [ 0.0 0.0 0.0 0.0 ]
 
   odom_error [0.01 0.01 999999 999999 999999 0.01]
 
@@ -26,6 +24,6 @@ define my_robot position
   drive "diff"
   obstacle_return 1
 
-  kinect(pose [ 0 0.0 0 0.0 ])
+  kinect(pose [ -0.1 0.0 -0.11 0.0 ])
 )
 

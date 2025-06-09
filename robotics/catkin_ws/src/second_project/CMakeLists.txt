@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_geometry_msgs
   actionlib
   move_base_msgs
+  move_base
 )
 
 catkin_package(
@@ -26,6 +27,11 @@ catkin_package(
   tf2_geometry_msgs
   actionlib
   move_base_msgs
+  move_base
+)
+
+catkin_install_python(PROGRAMS scripts/filter_map.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})

@@ -43,6 +43,8 @@ public:
         merged.header.frame_id = "base_link";
         merged.angle_min = MERGED_ANGLE_MIN;
         merged.angle_max = MERGED_ANGLE_MAX;
+		merged.range_min = RANGE_MIN;
+		merged.range_max = RANGE_MAX;
         merged.angle_increment = ANGLE_INCREMENT;
         merged.ranges.resize(NUM_BINS, std::numeric_limits<float>::infinity());
 
@@ -51,8 +53,8 @@ public:
 
         merged_pub.publish(merged);
 
-        latest_back.reset();
-        latest_front.reset();
+        //latest_back.reset();
+        //latest_front.reset();
     }
 
     // Transform each point of a scan into base_link and bin into merged scan
@@ -73,7 +75,7 @@ public:
             scan_point.point.z = 0.0;
 
             try {
-                tf_buffer.transform(scan_point, base_point, "base_link", ros::Duration(0.05));
+                tf_buffer.transform(scan_point, base_point, "base_link", ros::Duration(0.03));
             } catch (tf2::TransformException &ex) {
                 ROS_WARN("TF point transform failed: %s", ex.what());
                 continue;
@@ -85,7 +87,7 @@ public:
 			
             if (idx >= 0 && idx < merged.ranges.size()) {
                 if (base_r < merged.ranges[idx]) {
-                    merged.ranges[idx] = std::min(merged.ranges[idx], base_r);
+                    merged.ranges[idx] = base_r;
                 }
             }
         }
@@ -105,6 +107,8 @@ private:
     // LaserScan parameters
     const double ANGLE_MIN = -2.356194496154785;
     const double ANGLE_MAX = 2.3557233810424805;
+	const double RANGE_MIN = 0.0;
+	const double RANGE_MAX = 10.0;
     const double ANGLE_INCREMENT = 0.00581718236207962;
     const double ANGLE_LEFT_CUT = -M_PI / 2; // -90° in radians
     const double ANGLE_RIGHT_CUT = M_PI / 2; // +90° in radians

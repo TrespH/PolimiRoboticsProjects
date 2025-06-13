@@ -1,4 +1,5 @@
 footprint: [[-0.27, -0.20], [-0.27, 0.20], [0.27, 0.20], [0.27, -0.20]]  # Bounding box del robot
+# Physical structure is around 54 cm long and 40 cm wide
 
 map_type: costmap_2d
 

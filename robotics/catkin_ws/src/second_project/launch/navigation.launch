@@ -1,7 +1,7 @@
 <launch>
-  <arg name="base"       default="burger"/>
+  <!--<arg name="base"       default="burger"/>-->
   <!-- Name of the map to use and initial position -->
-  <arg name="map_file"       default="$(find second_project)/map/map6_cropped.yaml"/>
+  <arg name="map_file"       default="$(find second_project)/map/map3_cropped.yaml"/>
   <arg name="world_file"     default="$(find second_project)/stage/robot.world"/>
   <arg name="initial_pose_x" default="-6.5"/>
   <arg name="initial_pose_y" default="-4.0"/>
@@ -36,11 +36,11 @@
     <param name="recovery_behavior_enabled" value="true"/>
     <param name="clearing_rotation_allowed" value="true"/>
     <param name="conservative_reset_dist" value="3.0"/> 
-    <rosparam param="recovery_behaviors"> 
+    <!--<rosparam param="recovery_behaviors"> 
       [{name: conservative_reset, type: clear_costmap_recovery/ClearCostmapRecovery},
        {name: rotate_recovery, type: rotate_recovery/RotateRecovery},
        {name: aggressive_reset, type: clear_costmap_recovery/ClearCostmapRecovery}]
-    </rosparam>
+    </rosparam>-->
   </node>
 
   <!--(goal publisher) -->

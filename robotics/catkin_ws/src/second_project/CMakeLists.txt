@@ -30,7 +30,8 @@ catkin_package(
   move_base
 )
 
-catkin_install_python(PROGRAMS scripts/filter_map.py
+catkin_install_python(PROGRAMS
+  scripts/goal_recorder.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

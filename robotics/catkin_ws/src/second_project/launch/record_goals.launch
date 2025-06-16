@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="second_project" type="goal_recorder.py" name="goal_recorder" output="screen">
+    <param name="csv_file" value="$(find second_project)/csv/goals.csv" />
+  </node>
+</launch>

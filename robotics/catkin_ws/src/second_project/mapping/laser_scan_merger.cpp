@@ -35,9 +35,9 @@ public:
         if (!latest_back || !latest_front) return;
 
         ros::Duration dt = latest_front->header.stamp - latest_back->header.stamp;
-        if (std::abs(dt.toSec()) > 0.06) return; // Allow up to 60ms drift
+        if (std::abs(dt.toSec()) > 0.06) return; // allow up to 60ms drift among LIDAR reads
 
-        // Prepare merged LaserScan
+        // preparing merged LaserScan
         sensor_msgs::LaserScan merged;
         merged.header.stamp = ros::Time::now();
         merged.header.frame_id = "base_link";
@@ -52,12 +52,9 @@ public:
         processScan(latest_front, merged);
 
         merged_pub.publish(merged);
-
-        //latest_back.reset();
-        //latest_front.reset();
     }
 
-    // Transform each point of a scan into base_link and bin into merged scan
+    // transforming each point of a scan into base_link and bin into merged scan
     void processScan(const sensor_msgs::LaserScan::ConstPtr& scan, sensor_msgs::LaserScan& merged) {
         geometry_msgs::PointStamped scan_point, base_point;
 
@@ -66,7 +63,9 @@ public:
             if (r < ROBOT_RADIUS || std::isnan(r) || !std::isfinite(r)) continue;
 
             float angle = ANGLE_MIN + i * ANGLE_INCREMENT;
+			
 			// if (angle < ANGLE_LEFT_CUT || angle > ANGLE_RIGHT_CUT) continue;
+			// why commented: accept all scans to exploit the highest number of data
 
             scan_point.header.frame_id = scan->header.frame_id;
             scan_point.header.stamp = scan->header.stamp;
@@ -104,14 +103,14 @@ private:
     sensor_msgs::LaserScan::ConstPtr latest_front;
     sensor_msgs::LaserScan::ConstPtr latest_back;
 
-    // LaserScan parameters
+    // LIDAR parameters
     const double ANGLE_MIN = -2.356194496154785;
     const double ANGLE_MAX = 2.3557233810424805;
 	const double RANGE_MIN = 0.0;
 	const double RANGE_MAX = 10.0;
     const double ANGLE_INCREMENT = 0.00581718236207962;
-    const double ANGLE_LEFT_CUT = -M_PI / 2; // -90° in radians
-    const double ANGLE_RIGHT_CUT = M_PI / 2; // +90° in radians
+    const double ANGLE_LEFT_CUT = -M_PI / 2;
+    const double ANGLE_RIGHT_CUT = M_PI / 2;
     const double MERGED_ANGLE_MIN = ANGLE_LEFT_CUT; // -90° in radians
     const double MERGED_ANGLE_MAX = ANGLE_RIGHT_CUT + (ANGLE_RIGHT_CUT - ANGLE_LEFT_CUT); // +270° in radians
 	const int NUM_BINS = (int)((MERGED_ANGLE_MAX - MERGED_ANGLE_MIN) / ANGLE_INCREMENT); // 1080

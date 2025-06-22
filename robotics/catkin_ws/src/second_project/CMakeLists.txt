@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   move_base_msgs
   move_base
+  tf
 )
 
 catkin_package(
@@ -28,23 +29,23 @@ catkin_package(
   actionlib
   move_base_msgs
   move_base
-)
-
-catkin_install_python(PROGRAMS
-  scripts/goal_recorder.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  tf
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(odom_to_tf mapping/odom_to_tf.cpp)
 add_executable(laser_scan_merger mapping/laser_scan_merger.cpp)
-add_executable(navigation navigation/navigation.cpp) 
+add_executable(navigation navigation/navigation.cpp)
+add_executable(goal_recorder goal_recorder/goal_recorder.cpp)
 
 add_dependencies(odom_to_tf ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(laser_scan_merger ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(navigation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(goal_recorder ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 target_link_libraries(odom_to_tf ${catkin_LIBRARIES})
 target_link_libraries(laser_scan_merger ${catkin_LIBRARIES})
 target_link_libraries(navigation ${catkin_LIBRARIES})
+target_link_libraries(goal_recorder ${catkin_LIBRARIES})

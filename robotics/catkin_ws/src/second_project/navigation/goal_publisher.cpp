@@ -13,7 +13,7 @@ struct Goal {
     double x, y, theta;
 };
 
-std::vector<Goal> readGoalsFromCSV(const std::string& filepath) {
+std::vector<Goal> GoalReading(const std::string& filepath) {
     std::vector<Goal> goals;
     std::ifstream file(filepath);
     std::string line;
@@ -41,12 +41,14 @@ int main(int argc, char** argv) {
     std::string csv_file;
     nh.param<std::string>("csv_file", csv_file, "/home/user/catkin_ws/src/second_project/csv/goals.csv");
 
-    std::vector<Goal> goals = readGoalsFromCSV(csv_file);
+    std::vector<Goal> goals = GoalReading(csv_file);
 
     MoveBaseClient ac("move_base", true);
     ROS_INFO("Waiting for move_base action server...");
     ac.waitForServer();
     ROS_INFO("Connected to move_base.");
+
+    int goals_reached = 0;
 
     for (size_t i = 0; i < goals.size(); ++i) {
         move_base_msgs::MoveBaseGoal goal;
@@ -64,11 +66,15 @@ int main(int argc, char** argv) {
 
         ac.waitForResult();
 
-        if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+        if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
             ROS_INFO("Goal %lu reached!", i + 1);
-        else
+            goals_reached++;
+        } else {
             ROS_WARN("Failed to reach goal %lu", i + 1);
+        }
     }
+
+    ROS_INFO("Navigation completed. %d out of %lu goals reached.", goals_reached, goals.size());
 
     return 0;
 }

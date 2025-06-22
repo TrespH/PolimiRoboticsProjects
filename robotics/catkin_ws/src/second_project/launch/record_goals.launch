@@ -1,5 +1,0 @@
-<launch>
-  <node pkg="second_project" type="goal_recorder" name="goal_recorder" output="screen">
-    <param name="csv_file" value="$(find second_project)/csv/goals.csv" />
-  </node>
-</launch>

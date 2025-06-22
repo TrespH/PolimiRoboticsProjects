@@ -1,0 +1,9 @@
+image: cropped_cleaned.png
+resolution: 0.05
+origin:
+  - -12.011046
+  - -12.192354
+  - 0
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196

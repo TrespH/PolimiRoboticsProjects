@@ -20,10 +20,10 @@ interval_sim 100
 floorplan
 (
   name "map"
-  bitmap "../map/map3_cleaned.pgm" 
-  size [31.95 19.55 1.0]      
+  bitmap "../map/cropped_cleaned.png" 
+  size [32.55 18.6 1.0]     
   pose [0 0 0 0]               # initial position
-  origin [3.675 -2.925 0 0]
+  origin [4.263954 -2.892354 0 0]    #size/2+origin
 )
 
 window

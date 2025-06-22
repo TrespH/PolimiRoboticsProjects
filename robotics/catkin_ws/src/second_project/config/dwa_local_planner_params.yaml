@@ -2,12 +2,12 @@ DWAPlannerROS:
 
 # Robot Configuration Parameters - Kobuki
   max_vel_x: 0.3  # 0.55
-  min_vel_x: -0.1 
+  min_vel_x: -0.3 
   escape_vel: -0.1 
   allow_backwards: true
 
-  max_vel_y: 0.0  # diff drive robot
-  min_vel_y: 0.0  # diff drive robot
+  max_vel_y: 0.3  # omni-directional
+  min_vel_y: -0.3   # omni-directional
 
   max_vel_trans: 0.4
   min_vel_trans: 0.1  # this is the min trans velocity when there is negligible rotational velocity
@@ -23,7 +23,7 @@ DWAPlannerROS:
   
   acc_lim_x: 0.5 # maximum is theoretically 2.0, but we don't want to crash/do strange stuff/overshoot
   acc_lim_theta: 1.0 #rad
-  acc_lim_y: 0.0      # diff drive robot
+  acc_lim_y: 0.5    # omni-directional    
 
 # Goal Tolerance Parameters
   yaw_goal_tolerance: 0.3  # 0.05
@@ -33,7 +33,7 @@ DWAPlannerROS:
 # Forward Simulation Parameters
   sim_time: 2.0       # 1.7 The amount of time to forward-simulate trajectories in seconds
   vx_samples: 3       # 3 The number of samples to use when exploring the x velocity space
-  vy_samples: 10       # diff drive robot
+  vy_samples: 3      
   vtheta_samples: 20  # 20
 
 # Trajectory Scoring Parameters

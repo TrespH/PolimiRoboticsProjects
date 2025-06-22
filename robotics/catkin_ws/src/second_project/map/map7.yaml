@@ -1,4 +1,4 @@
-image: ./catkin_ws/src/second_project/map/map7.pgm
+image: map7.pgm
 resolution: 0.050000
 origin: [-12.111046, -12.892354, 0.000000]
 negate: 0

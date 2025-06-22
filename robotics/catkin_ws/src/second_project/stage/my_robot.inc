@@ -17,13 +17,13 @@ define my_robot position
 
   pose [ 0.0 0.0 0.0 0.0 ]
 
-  odom_error [0.01 0.01 999999 999999 999999 0.01]
+  odom_error [0.005 0.005 0 0 0 0.005]
 
   origin [ 0.0 0.0 0.0 0.0 ]
 
   gui_nose 1
   color "blue"
-  drive "diff"
+  drive "omni"
   obstacle_return 1
 
   kinect(pose [ 0 0.0 0 0.0 ])

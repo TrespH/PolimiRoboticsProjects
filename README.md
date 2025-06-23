@@ -149,7 +149,7 @@ In `robotics/catkin_ws/src/second_project/` you can find the implementation of a
 - Stage simulator
 - Additional ROS packages: `map_server`, `move_base`, `amcl`
 - RViz for visualization
-- Bag file: `robotics2.bag`, in the `/robotics/data` folder (to be extracted from its zip archive)
+- Bag file: `robotics2.bag`, in the `/robotics/data` folder
 
 ### Provided Folders
 

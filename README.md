@@ -71,7 +71,7 @@ In `robotics/catkin_ws/src/first_project/` you can find the implementation of od
 
 ---
 
-## Second Project (work in progress)
+## Second Project
 
 In `robotics/catkin_ws/src/second_project/` you can find the implementation of a mapping and navigation pipeline for a mobile robot using ROS.
 
@@ -83,13 +83,14 @@ In `robotics/catkin_ws/src/second_project/` you can find the implementation of a
   - Use two 2D LiDAR scans and robot odometry from a ROS bag to reconstruct an environment map
   - Data topics: `/scan_back`, `/scan_front`, `/odometry`, `/tf`, `/tf_static`
   - Merge the two lasers for 360° coverage and **filter out points belonging to the robot**
-  - Export the map as a `.png` image and a `.yaml` file.
+  - At first, we used the [gmapping](https://wiki.ros.org/gmapping) package, which works on a Grid-based Rao-Blackwellized Particle Filter SLAM; then, we tried to improve our mapping by the [slam-toolbox](https://github.com/SteveMacenski/slam_toolbox) package, which exploits the power of Pose Graph SLAM, with slightly better results, tuning the numerous parameters by trial-and-error
+  - Export the map as pgm, .png images and as .data, .posegraph and .yaml files
 
 - **Task 2: Navigation**
   - Simulate the robot in Stage using the generated map.
   - Setup navigation stack to localize and plan using the static map.
   - Drive to goals loaded from a CSV file, published via a custom node using ROS actions.
-  - Visualize in RViz: robot, map, TFs, particle cloud (AMCL), paths, goals.
+  - Visualize in RViz: robot, map, TFs, particle cloud (AMCL), paths, goals (you can also manually send goals via the Navigation toolset).
 
 ### How to Run
 
@@ -106,33 +107,49 @@ In `robotics/catkin_ws/src/second_project/` you can find the implementation of a
       rosbag play --clock data/robotics2.bag
       ```
 
-    - Save the map using *map_server*:
+    - Save the map using *map_server* and the serial formats using *serialize_map* from slam-toolbox:
 
       ```bash
       rosrun map_server map_saver -f ./catkin_ws/src/second_project/map/map
+      rosservice call /slam_toolbox/serialize_map "{filename: '/home/robotics/catkin_ws/src/second_project/map/map'}"
       ```
+
+    - Lastly, crop and clean the map using GIMP:
 
       ![Mapping of the second project](mapping_project2.png)
 
 2. **Navigation**
-    - Use the included launch files in `launch/`.
+    - Use the included launch files in `launch/`:
+
+      ```bash
+      roslaunch second_project navigation.launch
+      ```
+
     - The map from Task 1 must be placed in the `map/` folder.
     - Run with simulated time enabled.
     - Goals are read automatically from `csv/goals.csv`.
+    - The robot will navigate to each goal sequentially:
+
+      ![Navigation of the second project](navigation_project2.png)
 
 3. **Visualization**
     - On Windows, connect to [http://localhost:8080/vnc.html](http://localhost:8080/vnc.html)
-    - RViz configuration files are provided in `cfg/`.
+    - RViz configuration files are provided in `rviz/`.
     - View the map, robot, sensors, and navigation status.
+    - Alternatively, you can visualize everything by using [Floxglove](https://foxglove.dev/), and by running it:
+
+    ```bash
+    roslaunch foxglove_bridge foxglove_bridge.launch port:=8765 address:=0.0.0.0
+    ```
 
 ### Requirements
 
 - ROS Noetic
-- Mapping package: gmapping
+- Mapping package: slam-toolbox
 - Stage simulator
 - Additional ROS packages: `map_server`, `move_base`, `amcl`
 - RViz for visualization
-- Bag file: `robotics2.bag`
+- Bag file: `robotics2.bag`, in the `/robotics/data` folder (to be extracted from its zip archive)
 
 ### Provided Folders
 
@@ -140,4 +157,7 @@ In `robotics/catkin_ws/src/second_project/` you can find the implementation of a
 - `navigation/` – Source and launch files for Task 2.
 - `map/` – Output map files.
 - `csv/` – File with navigation goals.
-- `cfg/` – RViz configs.
+- `rviz/` – RViz configs.
+- `config/` – Configuration files for move_base and local/global planners.
+- `launch/` – Launch files to start the system and RViz.
+- `stage/` – Stage simulation files.
